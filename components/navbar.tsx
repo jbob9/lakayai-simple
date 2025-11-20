@@ -11,8 +11,8 @@ export const Navbar = async () => {
         </Link>
       </div>
 
-      <div className="border rounded-full p-1">
-        <span className="animate-pulse">💻</span>
+      <div className="">
+        <span className="animate-pulse">💬</span>
       </div>
     </div>
   );

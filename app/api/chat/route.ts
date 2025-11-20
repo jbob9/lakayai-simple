@@ -11,7 +11,7 @@ import {
 } from "ai";
 
 export async function POST(request: Request) {
-  const { id, message } = await request.json();
+  const { message } = await request.json();
   console.log(message, 'message')
   const uiMessages = [message];
 
