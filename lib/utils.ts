@@ -1,3 +1,6 @@
+import { Message } from "@/db";
+import { UIMessage } from "ai";
+import { formatISO } from "date-fns";
 import { ChatSDKError, ErrorCode } from "./errors";
 
 export const fetcher = async (url: string) => {
@@ -40,7 +43,17 @@ export async function fetchWithErrorHandlers(
   }
 }
 
-
 export function sanitizeText(text: string) {
   return text.replace("<has_function_call>", "");
+}
+
+export function convertToUIMessages(messages: Message[]) {
+  return messages.map((message) => ({
+    id: message.id,
+    role: message.role as "user" | "assistant" | "system",
+    parts: message.parts as UIMessage["parts"],
+    metadata: {
+      createdAt: formatISO(message.createdAt),
+    },
+  }));
 }

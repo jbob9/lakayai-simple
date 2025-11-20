@@ -1,7 +1,10 @@
-const Chat = async (props: { params: Promise<{ id: string }> }) => {
+import SingleChat from "./single-chat";
+
+const ChatPage = async (props: { params: Promise<{ id: string }> }) => {
   const params = await props.params;
   const { id } = params;
-  return <div>Chat</div>;
+
+  return <SingleChat chatId={id} />;
 };
 
-export default Chat;
+export default ChatPage;

@@ -1,12 +1,22 @@
 "use client";
 
 import { Message as PreviewMessage } from "@/components/message";
+import { createChat, saveMessages } from "@/db";
 import { useScrollToBottom } from "@/hooks/use-scroll-to-bottom";
 import { fetchWithErrorHandlers } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, UIMessage } from "ai";
 import { motion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
+import {
+  ArrowUpIcon,
+  Loader2Icon,
+  SendIcon,
+  SquareIcon,
+  StopCircleIcon,
+  XIcon,
+} from "lucide-react";
+import { nanoid } from "nanoid";
+import { useCallback, useState } from "react";
 
 const suggestedActions = [
   {
@@ -27,13 +37,8 @@ export function Chat({
   initialMessages: Array<UIMessage>;
 }) {
   const [input, setInput] = useState("");
-  const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const { messages, setMessages, sendMessage } = useChat({
+  const { messages, setMessages, sendMessage, status } = useChat({
     messages: initialMessages,
     transport: new DefaultChatTransport({
       api: "/api/chat",
@@ -48,7 +53,16 @@ export function Chat({
         };
       },
     }),
-    onFinish: () => {
+    onFinish: async ({ messages }) => {
+      await saveMessages(
+        messages.map((message) => ({
+          role: message.role,
+          chatId: id,
+          id: nanoid(),
+          createdAt: new Date(),
+          parts: message.parts,
+        }))
+      );
       // window.history.replaceState({}, "", `/chat/${id}`);
     },
   });
@@ -56,8 +70,11 @@ export function Chat({
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
 
-  const submitForm = useCallback(() => {
+  const submitForm = useCallback(async () => {
     window.history.replaceState({}, "", `/chat/${id}`);
+    if (messages.length <= 0) {
+      await createChat({ message: input });
+    }
 
     sendMessage({
       role: "user",
@@ -71,6 +88,16 @@ export function Chat({
 
     setInput("");
   }, [id, input, setInput, sendMessage]);
+
+  let Icon = <SendIcon className="size-4" />;
+
+  if (status === "submitted") {
+    Icon = <Loader2Icon className="size-4 animate-spin" />;
+  } else if (status === "streaming") {
+    Icon = <SquareIcon className="size-4" />;
+  } else if (status === "error") {
+    Icon = <XIcon className="size-4" />;
+  }
 
   return (
     <div className="flex flex-row justify-center pb-20 h-dvh bg-white dark:bg-zinc-900">
@@ -127,6 +154,31 @@ export function Chat({
               setInput(event.target.value);
             }}
           />
+
+          {status === "submitted" ? (
+            <button
+              className="relative text-sm bg-zinc-100 rounded-lg size-9 shrink-0 flex flex-row items-center justify-center cursor-pointer hover:bg-zinc-200 dark:text-zinc-50 dark:bg-zinc-700 dark:hover:bg-zinc-800"
+              data-testid="stop-button"
+              onClick={(event) => {
+                event.preventDefault();
+                stop();
+                setMessages((messages) => messages);
+              }}
+            >
+              <StopCircleIcon size={14} />
+            </button>
+          ) : (
+            <button
+              className="relative text-sm bg-zinc-100 rounded-lg size-9 shrink-0 flex flex-row items-center justify-center cursor-pointer hover:bg-zinc-200 dark:text-zinc-50 dark:bg-zinc-700 dark:hover:bg-zinc-800"
+              disabled={!input.trim()}
+            >
+              {status === "streaming" ? (
+                <SquareIcon className="size-4" />
+              ) : (
+                <ArrowUpIcon size={14} />
+              )}
+            </button>
+          )}
         </form>
       </div>
     </div>
