@@ -12,7 +12,7 @@ export const Navbar = async () => {
       </div>
 
       <div className="">
-        <span className="animate-pulse">💬</span>
+        <span className="text-xl">💬</span>
       </div>
     </div>
   );

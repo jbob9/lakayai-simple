@@ -1,32 +1,20 @@
 "use client";
 
-import { Chat } from "@/db";
-import { fetcher } from "@/lib/utils";
+import { db } from "@/db";
 import cx from "classnames";
+import { useLiveQuery } from "dexie-react-hooks";
 import { AnimatePresence, motion } from "framer-motion";
 import { InfoIcon, MenuIcon, PencilIcon } from "lucide-react";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import useSWR from "swr";
+import { useParams } from "next/navigation";
+import { useState } from "react";
 
 export const History = () => {
   const { id } = useParams();
-  const pathname = usePathname();
-
   const [isHistoryVisible, setIsHistoryVisible] = useState(false);
-  const {
-    data: history,
-    error,
-    isLoading,
-    mutate,
-  } = useSWR<Array<Chat>>("/api/history", fetcher, {
-    fallbackData: [],
+  const chats = useLiveQuery(async () => {
+    return await db.chats.toArray();
   });
-
-  useEffect(() => {
-    mutate();
-  }, [pathname, mutate]);
 
   return (
     <>
@@ -79,37 +67,15 @@ export const History = () => {
               </div>
 
               <div className="flex flex-col overflow-y-scroll">
-                {error && error.status === 401 ? (
-                  <div className="text-zinc-500 h-dvh w-full flex flex-row justify-center items-center text-sm gap-2">
-                    <InfoIcon />
-                    <div>Login to save and revisit previous chats!</div>
-                  </div>
-                ) : null}
-
-                {!isLoading && history?.length === 0 && !error ? (
+                {chats?.length === 0 ? (
                   <div className="text-zinc-500 h-dvh w-full flex flex-row justify-center items-center text-sm gap-2">
                     <InfoIcon />
                     <div>No chats found</div>
                   </div>
                 ) : null}
 
-                {isLoading && !error ? (
-                  <div className="flex flex-col w-full">
-                    {[44, 32, 28, 52].map((item) => (
-                      <div
-                        key={item}
-                        className="p-2 border-b dark:border-zinc-700"
-                      >
-                        <div
-                          className={`w-${item} h-5 bg-zinc-200 dark:bg-zinc-600 animate-pulse`}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
-
-                {history &&
-                  history.map((chat) => (
+                {chats &&
+                  chats.map((chat) => (
                     <Link
                       href={`/${chat.id}`}
                       key={chat.id}

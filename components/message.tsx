@@ -28,8 +28,9 @@ export const Message = ({
           {message.parts.map((part, i) => {
             if (part.type === "text") {
               return <Markdown>{sanitizeText(part.text)}</Markdown>;
+            } else {
+              return "Only support text";
             }
-            return 'Only support text';
           })}
         </div>
       </div>
