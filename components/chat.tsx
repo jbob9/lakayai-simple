@@ -71,7 +71,7 @@ export function Chat({
     useScrollToBottom<HTMLDivElement>();
 
   const submitForm = useCallback(async () => {
-    window.history.replaceState({}, "", `/chat/${id}`);
+    window.history.replaceState({}, "", `/${id}`);
     if (messages.length <= 0) {
       await createChat({ message: input });
     }
