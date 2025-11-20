@@ -1,12 +1,14 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { Chat } from "@/db";
+import { fetcher } from "@/lib/utils";
+import cx from "classnames";
+import { AnimatePresence, motion } from "framer-motion";
+import { InfoIcon, MenuIcon, PencilIcon } from "lucide-react";
+import Link from "next/link";
+import { useParams, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-import Link from "next/link";
-import cx from "classnames";
-import { useParams, usePathname } from "next/navigation";
-import { fetcher } from "@/utils/functions";
 
 export const History = () => {
   const { id } = useParams();
@@ -72,7 +74,7 @@ export const History = () => {
                     setIsHistoryVisible(false);
                   }}
                 >
-                  <PencilEditIcon size={14} />
+                  <PencilIcon size={14} />
                 </Link>
               </div>
 
@@ -99,7 +101,7 @@ export const History = () => {
                         className="p-2 border-b dark:border-zinc-700"
                       >
                         <div
-                          className={`w-${item} h-[20px] bg-zinc-200 dark:bg-zinc-600 animate-pulse`}
+                          className={`w-${item} h-5 bg-zinc-200 dark:bg-zinc-600 animate-pulse`}
                         />
                       </div>
                     ))}
@@ -115,10 +117,10 @@ export const History = () => {
                         "p-2 dark:text-zinc-400 border-b dark:border-zinc-700 text-sm dark:hover:bg-zinc-700 hover:bg-zinc-200 last-of-type:border-b-0",
                         {
                           "dark:bg-zinc-700 bg-zinc-200": id === chat.id,
-                        },
+                        }
                       )}
                     >
-                      {chat.messages[0].content as string}
+                      {chat.title}
                     </Link>
                   ))}
               </div>

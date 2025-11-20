@@ -1,15 +1,17 @@
 "use client";
 
+import { sanitizeText } from "@/lib/utils";
+import type { UIDataTypes, UIMessage, UITools } from "ai";
 import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { BotIcon, UserIcon } from "lucide-react";
 import { Markdown } from "./markdown";
 
 export const Message = ({
   role,
-  content,
+  message,
 }: {
   role: string;
-  content: string | ReactNode;
+  message: UIMessage<unknown, UIDataTypes, UITools>;
 }) => {
   return (
     <motion.div
@@ -23,7 +25,12 @@ export const Message = ({
 
       <div className="flex flex-col gap-6 w-full">
         <div className="text-zinc-800 dark:text-zinc-300 flex flex-col gap-4">
-          <Markdown>{content as string}</Markdown>
+          {message.parts.map((part, i) => {
+            if (part.type === "text") {
+              return <Markdown>{sanitizeText(part.text)}</Markdown>;
+            }
+            return 'Only support text';
+          })}
         </div>
       </div>
     </motion.div>

@@ -2,20 +2,19 @@
 
 import { Message as PreviewMessage } from "@/components/message";
 import { useScrollToBottom } from "@/hooks/use-scroll-to-bottom";
+import { fetchWithErrorHandlers } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
-import { UIMessage } from "ai";
+import { DefaultChatTransport, UIMessage } from "ai";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const suggestedActions = [
   {
     title: "What's the summary",
-    label: "of these documents?",
     action: "what's the summary of these documents?",
   },
   {
     title: "Who is the author",
-    label: "of these documents?",
     action: "who is the author of these documents?",
   },
 ];
@@ -27,25 +26,51 @@ export function Chat({
   id: string;
   initialMessages: Array<UIMessage>;
 }) {
-  const [selectedFilePathnames, setSelectedFilePathnames] = useState<
-    Array<string>
-  >([]);
+  const [input, setInput] = useState("");
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const { messages, handleSubmit, input, setInput, append } = useChat({
-    body: { id, selectedFilePathnames },
-    initialMessages,
+  const { messages, setMessages, sendMessage } = useChat({
+    messages: initialMessages,
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+      fetch: fetchWithErrorHandlers,
+      prepareSendMessagesRequest(request) {
+        return {
+          body: {
+            id: request.id,
+            message: request.messages.at(-1),
+            ...request.body,
+          },
+        };
+      },
+    }),
     onFinish: () => {
-      window.history.replaceState({}, "", `/chat/${id}`);
+      // window.history.replaceState({}, "", `/chat/${id}`);
     },
   });
 
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
+
+  const submitForm = useCallback(() => {
+    window.history.replaceState({}, "", `/chat/${id}`);
+
+    sendMessage({
+      role: "user",
+      parts: [
+        {
+          type: "text",
+          text: input,
+        },
+      ],
+    });
+
+    setInput("");
+  }, [id, input, setInput, sendMessage]);
 
   return (
     <div className="flex flex-row justify-center pb-20 h-dvh bg-white dark:bg-zinc-900">
@@ -58,7 +83,7 @@ export function Chat({
             <PreviewMessage
               key={`${id}-${index}`}
               role={message.role}
-              content={message.content}
+              message={message}
             />
           ))}
           <div ref={messagesEndRef} className="shrink-0 min-w-6 min-h-6" />
@@ -76,17 +101,14 @@ export function Chat({
               >
                 <button
                   onClick={async () => {
-                    append({
+                    sendMessage({
                       role: "user",
-                      content: suggestedAction.action,
+                      parts: [{ type: "text", text: suggestedAction.action }],
                     });
                   }}
                   className="w-full text-left border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-300 rounded-lg p-2 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors flex flex-col"
                 >
                   <span className="font-medium">{suggestedAction.title}</span>
-                  <span className="text-zinc-500 dark:text-zinc-400">
-                    {suggestedAction.label}
-                  </span>
                 </button>
               </motion.div>
             ))}
@@ -95,7 +117,7 @@ export function Chat({
 
         <form
           className="flex flex-row gap-2 relative items-center w-full md:max-w-[500px] max-w-[calc(100dvw-32px) px-4 md:px-0"
-          onSubmit={handleSubmit}
+          onSubmit={submitForm}
         >
           <input
             className="bg-zinc-100 rounded-md px-2 py-1.5 flex-1 outline-none dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300"
