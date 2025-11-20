@@ -25,13 +25,19 @@ db.version(1).stores({
   messages: "id, role, parts, chatId, createdAt",
 });
 
-export const createChat = async ({ message }: { message: string }) => {
+export const createChat = async ({
+  chatId,
+  message,
+}: {
+  chatId: string;
+  message: string;
+}) => {
   const res = await fetch("/api/chat/title", {
     method: "POST",
     body: JSON.stringify({ message }),
   });
   const title = res.ok ? (await res.json()).title : "Unknown title";
-  await db.chats.add({ title, createdAt: new Date() });
+  await db.chats.add({ id: chatId, title, createdAt: new Date() });
 
   return title;
 };

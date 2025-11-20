@@ -77,7 +77,7 @@ export function Chat({
       window.history.replaceState({}, "", `/${id}`);
       console.log(input, "input");
       if (messages.length <= 0) {
-        await createChat({ message: input });
+        await createChat({ chatId: id, message: input });
       }
 
       sendMessage({
