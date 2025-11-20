@@ -11,8 +11,9 @@ import {
 } from "ai";
 
 export async function POST(request: Request) {
-  const { id, messages, message } = await request.json();
-  const uiMessages = [...convertToUIMessages(messages), message];
+  const { id, message } = await request.json();
+  console.log(message, 'message')
+  const uiMessages = [message];
 
   try {
     const stream = createUIMessageStream({
