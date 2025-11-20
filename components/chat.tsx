@@ -38,7 +38,7 @@ export function Chat({
   initialMessages: Array<UIMessage>;
 }) {
   const [input, setInput] = useState("");
-  useCleanUpDb()
+  useCleanUpDb();
 
   const { messages, setMessages, sendMessage, status } = useChat({
     messages: initialMessages,
@@ -134,6 +134,12 @@ export function Chat({
               >
                 <button
                   onClick={async () => {
+                    if (messages.length <= 0) {
+                      await createChat({
+                        chatId: id,
+                        message: suggestedAction.action,
+                      });
+                    }
                     sendMessage({
                       role: "user",
                       parts: [{ type: "text", text: suggestedAction.action }],
