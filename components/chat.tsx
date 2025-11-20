@@ -47,6 +47,7 @@ export function Chat({
         return {
           body: {
             id: request.id,
+            messages: request.messages,
             message: request.messages.at(-1),
             ...request.body,
           },
