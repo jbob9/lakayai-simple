@@ -51,7 +51,7 @@ export const History = () => {
                 <div className="flex flex-row gap-2">
                   <div className="dark:text-zinc-300">History</div>
                   <div className="dark:text-zinc-500 text-zinc-500">
-                    {history === undefined ? "loading" : history.length} chats
+                    {chats === undefined ? "loading" : chats.length} chats
                   </div>
                 </div>
 
