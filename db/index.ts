@@ -27,6 +27,7 @@ db.version(1).stores({
 
 export const createChat = async ({ message }: { message: string }) => {
   const res = await fetch("/api/chat/title", {
+    method: "POST",
     body: JSON.stringify({ message }),
   });
   const title = res.ok ? (await res.json()).title : "Unknown title";
