@@ -27,7 +27,11 @@ export const Message = ({
         <div className="text-zinc-800 dark:text-zinc-300 flex flex-col gap-4">
           {message.parts.map((part, i) => {
             if (part.type === "text") {
-              return <Markdown>{sanitizeText(part.text)}</Markdown>;
+              return (
+                <Markdown key={`${role}-${i}`}>
+                  {sanitizeText(part.text)}
+                </Markdown>
+              );
             }
           })}
         </div>

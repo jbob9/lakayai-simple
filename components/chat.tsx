@@ -2,6 +2,7 @@
 
 import { Message as PreviewMessage } from "@/components/message";
 import { createChat, saveMessages } from "@/db";
+import { useCleanUpDb } from "@/hooks/use-clean-up-db";
 import { useScrollToBottom } from "@/hooks/use-scroll-to-bottom";
 import { fetchWithErrorHandlers } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
@@ -20,12 +21,12 @@ import { FormEvent, useCallback, useState } from "react";
 
 const suggestedActions = [
   {
-    title: "What's the summary",
-    action: "what's the summary of these documents?",
+    title: "Ideo for today",
+    action: "Give me some ideas for something new to try today.",
   },
   {
-    title: "Who is the author",
-    action: "who is the author of these documents?",
+    title: "Something useful",
+    action: "Tell me something useful I can learn in 2 minutes.",
   },
 ];
 
@@ -37,6 +38,7 @@ export function Chat({
   initialMessages: Array<UIMessage>;
 }) {
   const [input, setInput] = useState("");
+  useCleanUpDb()
 
   const { messages, setMessages, sendMessage, status } = useChat({
     messages: initialMessages,
@@ -47,7 +49,6 @@ export function Chat({
         return {
           body: {
             id: request.id,
-            // messages: messages ?? [],
             message: request.messages.at(-1),
             ...request.body,
           },
@@ -64,7 +65,6 @@ export function Chat({
           parts: message.parts,
         }))
       );
-      // window.history.replaceState({}, "", `/chat/${id}`);
     },
   });
 
@@ -75,7 +75,7 @@ export function Chat({
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       window.history.replaceState({}, "", `/${id}`);
-      
+
       if (messages.length <= 0) {
         await createChat({ chatId: id, message: input });
       }
@@ -149,12 +149,12 @@ export function Chat({
         )}
 
         <form
-          className="flex flex-row gap-2 relative items-center w-full md:max-w-[500px] max-w-[calc(100dvw-32px) px-4 md:px-0"
+          className="flex flex-row relative items-center w-full md:max-w-[500px] max-w-[calc(100dvw-32px) px-4 md:px-0"
           onSubmit={submitForm}
         >
           <input
-            className="bg-zinc-100 rounded-md px-2 py-1.5 flex-1 outline-none dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300"
-            placeholder="Send a message..."
+            className="bg-zinc-100 rounded-l-g px-2 py-1.5 flex-1 outline-none dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300"
+            placeholder="Send a prompt..."
             value={input}
             onChange={(event) => {
               setInput(event.target.value);
@@ -163,7 +163,7 @@ export function Chat({
 
           {status === "submitted" ? (
             <button
-              className="relative text-sm bg-zinc-100 rounded-lg size-9 shrink-0 flex flex-row items-center justify-center cursor-pointer hover:bg-zinc-200 dark:text-zinc-50 dark:bg-zinc-700 dark:hover:bg-zinc-800"
+              className="relative text-sm bg-zinc-100 rounded-r-lg border-l size-9 shrink-0 flex flex-row items-center justify-center cursor-pointer hover:bg-zinc-200 dark:text-zinc-50 dark:bg-zinc-700 dark:hover:bg-zinc-800"
               data-testid="stop-button"
               onClick={(event) => {
                 event.preventDefault();
@@ -175,7 +175,7 @@ export function Chat({
             </button>
           ) : (
             <button
-              className="relative text-sm bg-zinc-100 rounded-lg size-9 shrink-0 flex flex-row items-center justify-center cursor-pointer hover:bg-zinc-200 dark:text-zinc-50 dark:bg-zinc-700 dark:hover:bg-zinc-800"
+              className="relative text-sm bg-zinc-100 rounded-r-lg border-l size-9 shrink-0 flex flex-row items-center justify-center cursor-pointer hover:bg-zinc-200 dark:text-zinc-50 dark:bg-zinc-700 dark:hover:bg-zinc-800"
               disabled={!input.trim()}
             >
               {status === "streaming" ? (

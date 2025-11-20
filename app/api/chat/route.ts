@@ -1,6 +1,5 @@
 import { myProvider } from "@/lib/ai/provider";
 import { ChatSDKError } from "@/lib/errors";
-import { convertToUIMessages } from "@/lib/utils";
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -41,7 +40,6 @@ export async function POST(request: Request) {
 
     return new Response(stream.pipeThrough(new JsonToSseTransformStream()));
   } catch (error) {
-    console.log("Error in chat route:", error);
     if (error instanceof ChatSDKError) {
       return error.toResponse();
     }

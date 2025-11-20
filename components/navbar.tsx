@@ -12,7 +12,7 @@ export const Navbar = async () => {
       </div>
 
       <div className="">
-        <span className="text-xl">💬</span>
+        <span className="text-2xl">💬</span>
       </div>
     </div>
   );
