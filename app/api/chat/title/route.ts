@@ -14,5 +14,5 @@ export async function POST(request: Request) {
     prompt: message,
   });
 
-  return { title };
+  return Response.json({ title }, { status: 200});
 }
