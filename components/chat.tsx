@@ -16,7 +16,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useCallback, useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 
 const suggestedActions = [
   {
@@ -70,7 +70,8 @@ export function Chat({
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
 
-  const submitForm = useCallback(async () => {
+  const submitForm = useCallback(async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     window.history.replaceState({}, "", `/${id}`);
     if (messages.length <= 0) {
       await createChat({ message: input });

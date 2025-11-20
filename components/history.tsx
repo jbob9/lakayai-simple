@@ -31,7 +31,7 @@ export const History = () => {
   return (
     <>
       <div
-        className="dark:text-zinc-400 text-zinc-500 cursor-pointer"
+        className="dark:text-zinc-400 text-zinc-500 cursor-pointer border rounded-md p-1"
         onClick={() => {
           setIsHistoryVisible(true);
         }}
