@@ -12,7 +12,6 @@ import {
 
 export async function POST(request: Request) {
   const { message } = await request.json();
-  console.log(message, 'message')
   const uiMessages = [message];
 
   try {

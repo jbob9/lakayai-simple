@@ -73,10 +73,9 @@ export function Chat({
 
   const submitForm = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
-      console.log("submitForm");
       e.preventDefault();
       window.history.replaceState({}, "", `/${id}`);
-      console.log(input, "input");
+      
       if (messages.length <= 0) {
         await createChat({ chatId: id, message: input });
       }

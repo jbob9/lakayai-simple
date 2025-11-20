@@ -3,20 +3,19 @@
 import { Chat } from "@/components/chat";
 import { db } from "@/db";
 import { convertToUIMessages } from "@/lib/utils";
-import { useLiveQuery } from "dexie-react-hooks";
+import { useLiveQuery, useDocument } from "dexie-react-hooks";
 
 const SingleChat = ({ chatId }: { chatId: string }) => {
-  const chatfromDb = useLiveQuery(async () => {
-    const [chat, messages] = await Promise.all([
-      db.chats.where("id").equals(chatId).first(),
-      db.messages.where("chatId").equals(chatId).toArray(),
-    ]);
-    return { ...chat, messages };
+  const messages = useLiveQuery(async () => {
+    return await db.messages.where("chatId").equals(chatId).toArray();
   });
 
-  const messages = convertToUIMessages(chatfromDb?.messages ?? []);
+  const Uimessages = convertToUIMessages(messages ?? []);
 
-  return <Chat id={chatId} initialMessages={messages} />;
+  console.log(messages, 'messages')
+  console.log(Uimessages, 'Uimessages')
+
+  return <Chat id={chatId} initialMessages={Uimessages} />;
 };
 
 export default SingleChat;
