@@ -21,11 +21,11 @@ import { FormEvent, useCallback, useState } from "react";
 
 const suggestedActions = [
   {
-    title: "Ideo for today",
+    title: "Ideas for today",
     action: "Give me some ideas for something new to try today.",
   },
   {
-    title: "Something useful",
+    title: "Something useful to learn",
     action: "Tell me something useful I can learn in 2 minutes.",
   },
 ];
@@ -153,7 +153,7 @@ export function Chat({
           onSubmit={submitForm}
         >
           <input
-            className="bg-zinc-100 rounded-l-g px-2 py-1.5 flex-1 outline-none dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300"
+            className="bg-zinc-100 rounded-l-lg px-2 py-3 flex-1 outline-none dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300"
             placeholder="Send a prompt..."
             value={input}
             onChange={(event) => {
@@ -163,7 +163,7 @@ export function Chat({
 
           {status === "submitted" ? (
             <button
-              className="relative text-sm bg-zinc-100 rounded-r-lg border-l size-9 shrink-0 flex flex-row items-center justify-center cursor-pointer hover:bg-zinc-200 dark:text-zinc-50 dark:bg-zinc-700 dark:hover:bg-zinc-800"
+              className="relative text-sm bg-zinc-100 rounded-r-lg border-l w-9 h-12 shrink-0 flex flex-row items-center justify-center cursor-pointer hover:bg-zinc-200 dark:text-zinc-50 dark:bg-zinc-700 dark:hover:bg-zinc-800 border-zinc-500"
               data-testid="stop-button"
               onClick={(event) => {
                 event.preventDefault();
@@ -175,7 +175,7 @@ export function Chat({
             </button>
           ) : (
             <button
-              className="relative text-sm bg-zinc-100 rounded-r-lg border-l size-9 shrink-0 flex flex-row items-center justify-center cursor-pointer hover:bg-zinc-200 dark:text-zinc-50 dark:bg-zinc-700 dark:hover:bg-zinc-800"
+              className="relative text-sm bg-zinc-100 rounded-r-lg border-l w-9 h-12 shrink-0 flex flex-row items-center justify-center cursor-pointer hover:bg-zinc-200 dark:text-zinc-50 dark:bg-zinc-700 dark:hover:bg-zinc-800 border-zinc-500"
               disabled={!input.trim()}
             >
               {status === "streaming" ? (
